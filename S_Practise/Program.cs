@@ -40,7 +40,23 @@ namespace S_Practise
                         Console.Write("Введіть студію: ");
                         string studio = Console.ReadLine() ?? string.Empty;
 
-                        albums.Add(new Album(title, artist, year, duration, studio));
+                        List<Song> songs = new List<Song>();
+                        while (true)
+                        {
+                            Console.WriteLine("Ведіть пісню (для завершення 'end')");
+                            Console.Write("Введіть назву пісні: ");
+                            string songTitle = Console.ReadLine() ?? string.Empty;
+                            if (songTitle == "end")
+                                break;
+
+                            Console.Write("Введіть тривалість (у хвилинах): ");
+                            int songDuration = int.TryParse(Console.ReadLine(), out int sd) ? sd : 0;
+                            Console.Write("Введіть жанр: ");
+                            string genre = Console.ReadLine() ?? string.Empty;
+                            songs.Add(new Song(songTitle, songDuration, genre));
+                        }
+
+                        albums.Add(new Album(title, artist, year, duration, studio, songs));
                         Console.WriteLine("Альбом додано успішно.");
                         Console.WriteLine("Натисніть будь-яку клавішу, щоб продовжити...");
                         Console.ReadKey();
@@ -55,14 +71,15 @@ namespace S_Practise
                         Console.ReadKey();
                         break;
                     case "3":
-                        string jsonString = JsonSerializer.Serialize(albums);
-                        File.WriteAllText("albums.json", jsonString);
+                        var options = new JsonSerializerOptions { WriteIndented = true };
+                        string jsonString = JsonSerializer.Serialize(albums, options);
+                        File.WriteAllText("albums2.json", jsonString);
                         Console.WriteLine("Альбоми збережено успішно.");
                         Console.WriteLine("Натисніть будь-яку клавішу, щоб продовжити...");
                         Console.ReadKey();
                         break;
                     case "4":
-                        string jsonFromFile = File.ReadAllText("albums.json");
+                        string jsonFromFile = File.ReadAllText("albums2.json");
                         albums = JsonSerializer.Deserialize<List<Album>>(jsonFromFile) ?? new List<Album>();
                         Console.WriteLine("Альбоми завантажено успішно.");
                         Console.WriteLine("Натисніть будь-яку клавішу, щоб продовжити...");
